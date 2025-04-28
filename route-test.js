@@ -2,12 +2,15 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
-app.use(express.static('public'));
+
+// Serve static files from the waapi-backend/public directory
+app.use(express.static(path.join(__dirname, 'waapi-backend/public')));
 
 // Import routes from your application
 const routes = require('./waapi-backend/src/routes');
@@ -18,59 +21,20 @@ app.use((req, res, next) => {
   next();
 });
 
-// Root route - Welcome page
-app.get('/', (req, res) => {
-  res.send(`
-    <html>
-      <head>
-        <title>Spirit WhatsApp App</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-            color: #333;
-          }
-          .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          }
-          h1 {
-            color: #4a6fa5;
-          }
-          .endpoint {
-            background-color: #f0f0f0;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 4px;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1>Spirit WhatsApp App</h1>
-          <p>Welcome to the Spirit WhatsApp Messaging Application with SMS routing capabilities!</p>
-          
-          <h2>Available Endpoints:</h2>
-          <div class="endpoint">/test - Test endpoint</div>
-          <div class="endpoint">/api - API endpoints</div>
-          <div class="endpoint">/admin - Admin endpoints</div>
-          <div class="endpoint">/auth - Authentication endpoints</div>
-        </div>
-      </body>
-    </html>
-  `);
-});
-
 // Mount routes
 app.use('/admin', routes.adminRoutes);
 app.use('/auth', routes.authRoutes);
 app.use('/api', routes.selectionRoutes);
+
+// Admin panel route
+app.get('/admin-panel', (req, res) => {
+  res.sendFile(path.join(__dirname, 'waapi-backend/public/admin.html'));
+});
+
+// Root route - Redirect to index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'waapi-backend/public/index.html'));
+});
 
 // Test endpoint
 app.get('/test', (req, res) => {

@@ -1,8 +1,15 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
+const bodyParser = require('body-parser');
+
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.json());
 
 // Import routes from your application
-const { selectionRoutes, authRoutes, adminRoutes } = require('./waapi-backend/src/routes');
+const routes = require('./waapi-backend/src/routes');
 
 // Route debugging middleware
 app.use((req, res, next) => {
@@ -11,9 +18,9 @@ app.use((req, res, next) => {
 });
 
 // Mount routes
-app.use('/admin', adminRoutes);
-app.use('/auth', authRoutes);
-app.use('/api', selectionRoutes);
+app.use('/admin', routes.adminRoutes);
+app.use('/auth', routes.authRoutes);
+app.use('/api', routes.selectionRoutes);
 
 // Test endpoint
 app.get('/test', (req, res) => {
@@ -21,7 +28,7 @@ app.get('/test', (req, res) => {
 });
 
 // Start server
-const PORT = 5003;
+const PORT = process.env.PORT || 5003;
 app.listen(PORT, () => {
   console.log(`Test server running on port ${PORT}`);
   console.log('Available routes:');

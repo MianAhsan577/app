@@ -1,0 +1,33 @@
+[debug] [2025-04-25T07:54:10.547Z] ----------------------------------------------------------------------
+[debug] [2025-04-25T07:54:10.550Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\HP\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init emulators
+[debug] [2025-04-25T07:54:10.551Z] CLI Version:   14.2.1
+[debug] [2025-04-25T07:54:10.551Z] Platform:      win32
+[debug] [2025-04-25T07:54:10.552Z] Node Version:  v23.8.0
+[debug] [2025-04-25T07:54:10.552Z] Time:          Fri Apr 25 2025 12:54:10 GMT+0500 (Pakistan Standard Time)
+[debug] [2025-04-25T07:54:10.552Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-04-25T07:54:10.777Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-04-25T07:54:10.777Z] > authorizing via signed-in user (abdurrehmanbaig447@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Spirit whtsp App\waapi-backend
+
+Before we get started, keep in mind:
+
+  * You are currently outside your home directory
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 

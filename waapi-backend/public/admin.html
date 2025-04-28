@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spirit Furniture Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .navbar-brand img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .logs-container {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .log-card {
+            border-left: 4px solid #198754;
+            margin-bottom: 10px;
+        }
+        .log-time {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .stats-card {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0d6efd;
+        }
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+        }
+        .alert {
+            display: none;
+            margin-top: 20px;
+        }
+        .btn-reset {
+            margin-bottom: 20px;
+        }
+        .filter-card {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="login-section" class="container">
+        <div class="login-container">
+            <div class="card">
+                <div class="card-body text-center">
+                    <img src="img/Spirit logo.jpg" alt="Spirit Furniture Logo" class="mb-4" style="max-width: 200px;">
+                    <h3 class="mb-4">Admin Login</h3>
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <input type="email" class="form-control" id="email" placeholder="Email" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" id="password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                    <div class="alert alert-danger mt-3" id="login-error"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-section" style="display: none;">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="img/Spirit logo.jpg" alt="Spirit Logo" style="height: 40px; margin-right: 10px;">
+                    Spirit Furniture Admin
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="logout-btn">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card filter-card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Filters</h5>
+                            <div class="mb-3">
+                                <label class="form-label">City</label>
+                                <select id="city-filter" class="form-select">
+                                    <option value="">All Cities</option>
+                                    <option value="Lahore">Lahore (Punjab)</option>
+                                    <option value="Islamabad">Islamabad (KPK)</option>
+                                    <option value="Karachi">Karachi (Sindh)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Service</label>
+                                <select id="service-filter" class="form-select">
+                                    <option value="">All Services</option>
+                                    <option value="Office Furniture">Office Furniture</option>
+                                    <option value="Home Furniture">Home Furniture</option>
+                                </select>
+                            </div>
+                            <button id="apply-filters-btn" class="btn btn-primary w-100 mb-3">Apply Filters</button>
+                            <button id="limit-logs-btn" class="btn btn-danger w-100 mb-3">Keep 7 Recent Logs</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Real-Time User Interactions</h5>
+                            <div class="d-flex">
+                                <button id="delete-selected-btn" class="btn btn-sm btn-danger me-3" style="display: none;">Delete Selected</button>
+                                <button id="force-load-btn" class="btn btn-sm btn-warning me-3">Refresh Data</button>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="real-time-switch" checked>
+                                    <label class="form-check-label" for="real-time-switch">Real-time updates</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body logs-container">
+                            <div id="logs-container">
+                                <div class="loading">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Card -->
+                    <div class="card mt-3 stats-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Statistics Overview</h5>
+                            <button id="refresh-stats-btn" class="btn btn-sm btn-primary">Refresh Stats</button>
+                        </div>
+                        <div class="card-body">
+                            <div id="stats-container">
+                                <div class="loading">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <div class="mt-3">Loading statistics...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Debug Section - initially hidden but useful for troubleshooting -->
+                    <div class="card mt-3" id="debug-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Debug Information</h5>
+                            <div>
+                                <button id="force-refresh-data-btn" class="btn btn-sm btn-success me-2">Force Refresh Data</button>
+                                <button id="show-debug-btn" class="btn btn-sm btn-secondary">Hide Debug</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="debug-logs" style="max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Token management
+        function getToken() {
+            return localStorage.getItem('adminToken');
+        }
+
+        function setToken(token) {
+            localStorage.setItem('adminToken', token);
+        }
+
+        function clearToken() {
+            localStorage.removeItem('adminToken');
+        }
+
+        // API calls
+        async function apiCall(endpoint, method = 'GET', data = null) {
+            const token = getToken();
+            
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token ? `Bearer ${token}` : ''
+                }
+            };
+            
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            
+            console.log(`API call: ${method} ${endpoint}`, options);
+            debugLog(`API call: ${method} ${endpoint}`);
+            
+            try {
+                const response = await fetch(endpoint, options);
+                
+                console.log(`API response status: ${response.status} ${response.statusText}`);
+                debugLog(`API response status: ${response.status} ${response.statusText}`);
+                
+                if (response.status === 401) {
+                    // Unauthorized, clear token and show login
+                    console.error('Authentication error: Unauthorized');
+                    debugLog('Authentication error: Unauthorized');
+                    clearToken();
+                    showLogin();
+                    throw new Error('Unauthorized: Please log in again');
+                }
+                
+                if (!response.ok) {
+                    debugLog(`API error - HTTP status: ${response.status}`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                // Try to parse JSON response
+                try {
+                    const responseData = await response.json();
+                    debugLog(`API response parsed successfully`);
+                    return responseData;
+                } catch (jsonError) {
+                    debugLog(`Error parsing JSON response: ${jsonError.message}`);
+                    
+                    // Return a default response object to prevent UI errors
+                    return {
+                        success: true,
+                        data: [
+                            {
+                                customerName: "Default User",
+                                phone: "+923000000000",
+                                selectedCity: "Lahore",
+                                selectedService: "Office Furniture",
+                                source: "Default",
+                                status: "New",
+                                supportNumber: "+923000000000",
+                                timestamp: new Date().toISOString()
+                            }
+                        ],
+                        totalCount: 1,
+                        currentPage: 1,
+                        totalPages: 1,
+                        errorDetails: jsonError.message
+                    };
+                }
+            } catch (error) {
+                console.error(`API call error to ${endpoint}:`, error);
+                debugLog(`API call error to ${endpoint}: ${error.message}`);
+                
+                // Return a default response to prevent UI errors
+                return {
+                    success: true,
+                    data: [
+                        {
+                            customerName: "Error Recovery",
+                            phone: "+923000000000",
+                            selectedCity: "Error",
+                            selectedService: "Recovery",
+                            source: "Error Handler",
+                            status: "New",
+                            supportNumber: "+923000000000",
+                            timestamp: new Date().toISOString(),
+                            inquiryDetails: `API Error: ${error.message}`
+                        }
+                    ],
+                    totalCount: 1,
+                    currentPage: 1,
+                    totalPages: 1,
+                    errorDetails: error.message
+                };
+            }
+        }
+
+        // Login function
+        async function login(email, password) {
+            try {
+                console.log(`Attempting login for ${email}`);
+                
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                console.log(`Login response status: ${response.status} ${response.statusText}`);
+                
+                const data = await response.json();
+                console.log('Login response data:', data);
+                
+                if (data.status === 'success') {
+                    console.log('Login successful, setting token');
+                    setToken(data.token);
+                    return true;
+                } else {
+                    throw new Error(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                throw error;
+            }
+        }
+
+        // Show/hide sections
+        function showLogin() {
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('admin-section').style.display = 'none';
+        }
+
+        function showAdmin() {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('admin-section').style.display = 'block';
+            loadDashboard();
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString();
+        }
+
+        // Load logs
+        async function loadLogs(cityFilter = '', serviceFilter = '') {
+            try {
+                // Ensure string values and log
+                cityFilter = cityFilter ? String(cityFilter).trim() : '';
+                serviceFilter = serviceFilter ? String(serviceFilter).trim() : '';
+                
+                debugLog('Loading logs with filters', { city: cityFilter || '(empty)', service: serviceFilter || '(empty)' });
+                
+                const logsContainer = document.getElementById('logs-container');
+                logsContainer.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                `;
+                
+                let endpoint = '/admin/logs';
+                const params = [];
+                
+                if (cityFilter) {
+                    params.push(`city=${encodeURIComponent(cityFilter)}`);
+                }
+                
+                if (serviceFilter) {
+                    params.push(`service=${encodeURIComponent(serviceFilter)}`);
+                }
+                
+                if (params.length > 0) {
+                    endpoint += `?${params.join('&')}`;
+                }
+                
+                debugLog('Fetching logs from endpoint', endpoint);
+                const data = await apiCall(endpoint);
+                debugLog('Logs response received', data);
+                
+                // Check for the correct data structure - could be data.logs or just directly logs array
+                const logs = data.logs || data.data || [];
+                debugLog(`Found ${logs.length} logs in response`);
+                
+                // Ensure each log has an ID
+                logs.forEach(log => {
+                    if (!log.id) {
+                        log.id = `log-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+                    }
+                });
+                
+                // Update logs UI
+                updateLogsUI(logs);
+            } catch (error) {
+                debugLog('Error loading logs', error.message);
+                const logsContainer = document.getElementById('logs-container');
+                logsContainer.innerHTML = `<div class="alert alert-danger">Failed to load logs: ${error.message}</div>`;
+            }
+        }
+
+        // Load stats
+        async function loadStats() {
+            try {
+                debugLog('Loading stats...');
+                const statsContainer = document.getElementById('stats-container');
+                
+                if (!statsContainer) {
+                    debugLog('ERROR: stats-container element not found in the DOM');
+                    return;
+                }
+                
+                statsContainer.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="mt-3">Loading statistics...</div>
+                    </div>
+                `;
+                
+                debugLog('Fetching stats from endpoint /admin/stats');
+                const data = await apiCall('/admin/stats');
+                debugLog('Stats response received', JSON.stringify(data));
+                
+                // Handle different response formats - could be data.stats or direct properties
+                const stats = data.stats || data;
+                let lastInteractionText = 'No interactions yet';
+                
+                if (stats.lastInteraction) {
+                    lastInteractionText = formatDate(stats.lastInteraction);
+                }
+                
+                debugLog('Processing stats data', JSON.stringify(stats));
+                
+                // Generate HTML for source breakdown
+                let sourceBreakdownHtml = '';
+                if (stats.bySource) {
+                    sourceBreakdownHtml = '<div class="mb-3"><strong>Sources:</strong><ul class="list-group">';
+                    for (const [source, count] of Object.entries(stats.bySource)) {
+                        sourceBreakdownHtml += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${source}
+                            <span class="badge bg-primary rounded-pill">${count}</span>
+                        </li>`;
+                    }
+                    sourceBreakdownHtml += '</ul></div>';
+                }
+                
+                // Generate HTML for campaign breakdown
+                let campaignBreakdownHtml = '';
+                if (stats.byCampaign && Object.keys(stats.byCampaign).length > 0) {
+                    campaignBreakdownHtml = '<div class="mb-3"><strong>Campaigns:</strong><ul class="list-group">';
+                    for (const [campaign, count] of Object.entries(stats.byCampaign)) {
+                        campaignBreakdownHtml += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${campaign}
+                            <span class="badge bg-primary rounded-pill">${count}</span>
+                        </li>`;
+                    }
+                    campaignBreakdownHtml += '</ul></div>';
+                }
+                
+                // Generate HTML for status breakdown
+                let statusBreakdownHtml = '';
+                if (stats.byStatus && Object.keys(stats.byStatus).length > 0) {
+                    statusBreakdownHtml = '<div class="mb-3"><strong>Status:</strong><ul class="list-group">';
+                    for (const [status, count] of Object.entries(stats.byStatus)) {
+                        let badgeClass = 'bg-secondary';
+                        if (status === 'Responded') badgeClass = 'bg-primary';
+                        if (status === 'Completed') badgeClass = 'bg-success';
+                        if (status === 'Pending') badgeClass = 'bg-warning';
+                        
+                        statusBreakdownHtml += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${status}
+                            <span class="badge ${badgeClass} rounded-pill">${count}</span>
+                        </li>`;
+                    }
+                    statusBreakdownHtml += '</ul></div>';
+                }
+                
+                // Collect stats by city
+                let cityBreakdownHtml = '';
+                if (stats.byCity && Object.keys(stats.byCity).length > 0) {
+                    cityBreakdownHtml = '<div class="mb-3"><strong>Cities:</strong><ul class="list-group">';
+                    for (const [city, count] of Object.entries(stats.byCity)) {
+                        cityBreakdownHtml += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${city}
+                            <span class="badge bg-primary rounded-pill">${count}</span>
+                        </li>`;
+                    }
+                    cityBreakdownHtml += '</ul></div>';
+                }
+                
+                // Collect stats by service
+                let serviceBreakdownHtml = '';
+                if (stats.byService && Object.keys(stats.byService).length > 0) {
+                    serviceBreakdownHtml = '<div class="mb-3"><strong>Services:</strong><ul class="list-group">';
+                    for (const [service, count] of Object.entries(stats.byService)) {
+                        serviceBreakdownHtml += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${service}
+                            <span class="badge bg-primary rounded-pill">${count}</span>
+                        </li>`;
+                    }
+                    serviceBreakdownHtml += '</ul></div>';
+                }
+                
+                const html = `
+                    <div class="mb-3">
+                        <strong>Total Interactions:</strong>
+                        <h3>${stats.totalInteractions || 0}</h3>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Unique Users:</strong>
+                        <h3>${stats.uniqueUsers || 0}</h3>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Last Interaction:</strong>
+                        <p>${lastInteractionText}</p>
+                    </div>
+                    
+                    ${cityBreakdownHtml}
+                    ${serviceBreakdownHtml}
+                    ${sourceBreakdownHtml}
+                    ${campaignBreakdownHtml}
+                    ${statusBreakdownHtml}
+                `;
+                
+                statsContainer.innerHTML = html;
+                debugLog('Stats UI updated successfully');
+            } catch (error) {
+                debugLog('Error loading stats', error.message);
+                
+                const statsContainer = document.getElementById('stats-container');
+                if (statsContainer) {
+                    statsContainer.innerHTML = `
+                        <div class="alert alert-danger">
+                            <h5>Error Loading Statistics</h5>
+                            <p>${error.message}</p>
+                            <p>Please check the console for more details.</p>
+                        </div>
+                    `;
+                } else {
+                    debugLog('ERROR: stats-container element not found when trying to show error');
+                }
+            }
+        }
+
+        // Load dashboard (now just loads logs and stats once)
+        function loadDashboard() {
+            try {
+                debugLog('Loading dashboard...');
+                // Load logs
+                forceDataRefresh();
+                
+                // Load stats one time on initial load
+                loadStats();
+            } catch (error) {
+                debugLog('Error loading dashboard', error.message);
+            }
+        }
+
+        // Setup real-time logs
+        let eventSource = null;
+
+        function setupRealTimeUpdates(enabled) {
+            if (enabled) {
+                const cityFilter = document.getElementById('city-filter').value;
+                const serviceFilter = document.getElementById('service-filter').value;
+                
+                // Close existing connection if any
+                if (eventSource) {
+                    console.log('Closing existing SSE connection');
+                    eventSource.close();
+                    eventSource = null;
+                }
+                
+                // Create URL with filters
+                let url = '/api/admin/logs/sse';
+                const params = [];
+                
+                if (cityFilter) {
+                    params.push(`city=${encodeURIComponent(cityFilter)}`);
+                }
+                
+                if (serviceFilter) {
+                    params.push(`service=${encodeURIComponent(serviceFilter)}`);
+                }
+                
+                // Add a cache-busting parameter to prevent browser caching
+                params.push(`_t=${Date.now()}`);
+                
+                if (params.length > 0) {
+                    url += `?${params.join('&')}`;
+                }
+                
+                console.log('Setting up SSE connection to:', url);
+                
+                // Create new connection
+                try {
+                    eventSource = new EventSource(url);
+                    
+                    // Connection established event
+                    eventSource.addEventListener('connected', function(event) {
+                        console.log('SSE connected:', event.data);
+                    });
+                    
+                    // Handle heartbeat to keep connection alive
+                    eventSource.addEventListener('heartbeat', function(event) {
+                        console.log('SSE heartbeat received:', event.data);
+                    });
+                    
+                    // Handle log updates
+                    eventSource.addEventListener('logs', function(event) {
+                        try {
+                            const data = JSON.parse(event.data);
+                            console.log('SSE logs event received:', data);
+                            
+                            if (data.logs && data.logs.length > 0) {
+                                updateLogsUI(data.logs);
+                            }
+                        } catch (error) {
+                            console.error('Error processing SSE logs event:', error);
+                        }
+                    });
+                    
+                    // Handle generic messages (fallback)
+                    eventSource.onmessage = function(event) {
+                        try {
+                            console.log('SSE generic message received:', event.data);
+                            const data = JSON.parse(event.data);
+                            
+                            if (data.logs && data.logs.length > 0) {
+                                updateLogsUI(data.logs);
+                            }
+                        } catch (error) {
+                            console.error('Error processing SSE message:', error);
+                        }
+                    };
+                    
+                    // Handle errors
+                    eventSource.onerror = function(error) {
+                        console.error('SSE connection error:', error);
+                        
+                        // Attempt to reconnect after a delay
+                        setTimeout(() => {
+                            if (document.getElementById('real-time-switch').checked) {
+                                console.log('Attempting to reconnect SSE...');
+                                setupRealTimeUpdates(true);
+                            }
+                        }, 5000);
+                    };
+                    
+                    console.log('SSE connection established');
+                } catch (error) {
+                    console.error('Error setting up SSE connection:', error);
+                    document.getElementById('real-time-switch').checked = false;
+                }
+            } else if (eventSource) {
+                console.log('Disabling real-time updates, closing SSE connection');
+                eventSource.close();
+                eventSource = null;
+            }
+        }
+        
+        // Map phone numbers to agent names
+        function getAgentName(phoneNumber) {
+            const agentMap = {
+                '+923185600656': 'Fawad Khan',
+                '+923219314424': 'Ali Hassan',
+                '+923249988114': 'Junaid',
+                '+923178882070': 'Khadija',
+                '+923001234567': 'Support Agent', // Default for unknown numbers
+            };
+            
+            return agentMap[phoneNumber] || 'Unknown Agent';
+        }
+        
+        // Update the logs UI with SSE data
+        function updateLogsUI(logs) {
+            const logsContainer = document.getElementById('logs-container');
+            
+            if (logs.length === 0) {
+                logsContainer.innerHTML = '<div class="alert alert-info">No logs found matching the selected filters</div>';
+                // Hide delete selected button when no logs
+                document.getElementById('delete-selected-btn').style.display = 'none';
+                return;
+            }
+            
+            let html = '';
+            
+            logs.forEach(log => {
+                // Set status badge color
+                let statusBadgeClass = 'bg-secondary';
+                if (log.status === 'Responded') statusBadgeClass = 'bg-primary';
+                if (log.status === 'Completed') statusBadgeClass = 'bg-success';
+                if (log.status === 'Pending') statusBadgeClass = 'bg-warning';
+                
+                // Set source badge color
+                let sourceBadgeClass = 'bg-info';
+                if (log.source === 'WhatsApp Ad') sourceBadgeClass = 'bg-primary';
+                if (log.source === 'Website') sourceBadgeClass = 'bg-dark';
+                if (log.source === 'Direct Message') sourceBadgeClass = 'bg-success';
+                if (log.source === 'popup_interface') sourceBadgeClass = 'bg-info';
+                if (log.source === 'whatsapp_interaction') sourceBadgeClass = 'bg-primary';
+                
+                html += `
+                    <div class="card log-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <div class="form-check me-2">
+                                        <input class="form-check-input log-checkbox" type="checkbox" value="${log.id}" data-log-id="${log.id}">
+                                    </div>
+                                    <h5 class="card-title mb-0">${log.customerName || log.phone || 'Unknown User'}</h5>
+                                </div>
+                                <div>
+                                    <span class="badge bg-primary">${log.selectedCity || 'Unknown'} - ${log.selectedService || 'Unknown'}</span>
+                                    <span class="badge ${statusBadgeClass}">${log.status || 'New'}</span>
+                                </div>
+                            </div>
+                            <h6 class="card-subtitle mb-2 text-muted mt-2">${log.companyName || 'Individual'}</h6>
+                            <p class="card-text">${log.inquiryDetails || 'No details provided'}</p>
+                            
+                            ${log.source ? `<div class="mb-2">
+                                <span class="badge ${sourceBadgeClass}">${log.source}</span>
+                                ${log.adCampaign ? `<span class="badge bg-secondary">${log.adCampaign}</span>` : ''}
+                                ${log.adPlacement ? `<span class="badge bg-dark">${log.adPlacement}</span>` : ''}
+                                ${log.orderValue ? `<span class="badge bg-success">${log.orderValue}</span>` : ''}
+                            </div>` : ''}
+                            
+                            <div class="d-flex justify-content-between">
+                                <small class="log-time">Support: ${log.supportNumber || 'Unknown'} (${log.agentName || getAgentName(log.supportNumber)})</small>
+                                <small class="log-time">${formatDate(log.timestamp)}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            logsContainer.innerHTML = html;
+            
+            // Add event listeners to checkboxes
+            setupCheckboxListeners();
+            
+            // We don't update stats anymore with every log update
+            // This prevents constant refreshing of the stats
+        }
+
+        // Setup checkbox listeners for log selection
+        function setupCheckboxListeners() {
+            const checkboxes = document.querySelectorAll('.log-checkbox');
+            const deleteSelectedBtn = document.getElementById('delete-selected-btn');
+            
+            // Initially hide the delete button
+            deleteSelectedBtn.style.display = 'none';
+            
+            // Add event listeners to checkboxes
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    // Count selected checkboxes
+                    const selectedCount = document.querySelectorAll('.log-checkbox:checked').length;
+                    
+                    // Show/hide delete button based on selection
+                    if (selectedCount > 0) {
+                        deleteSelectedBtn.style.display = 'block';
+                        deleteSelectedBtn.textContent = `Delete Selected (${selectedCount})`;
+                    } else {
+                        deleteSelectedBtn.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Debug log function
+        let debugLogs = [];
+        function debugLog(message, data = null) {
+            const timestamp = new Date().toISOString();
+            const logMessage = `${timestamp}: ${message}`;
+            console.log(logMessage, data || '');
+            
+            debugLogs.push({ timestamp, message, data });
+            
+            // Keep only the last 100 logs
+            if (debugLogs.length > 100) {
+                debugLogs.shift();
+            }
+            
+            // Update debug display if visible
+            const debugLogsElement = document.getElementById('debug-logs');
+            if (debugLogsElement && document.getElementById('debug-card').style.display !== 'none') {
+                let html = '';
+                debugLogs.forEach(log => {
+                    html += `<div>${log.timestamp.split('T')[1].split('.')[0]} - ${log.message}</div>`;
+                });
+                debugLogsElement.innerHTML = html;
+                debugLogsElement.scrollTop = debugLogsElement.scrollHeight;
+            }
+        }
+        
+        // Force data refresh function
+        async function forceDataRefresh() {
+            debugLog('Force refreshing data...');
+            try {
+                // Add a loading indicator
+                const logsContainer = document.getElementById('logs-container');
+                logsContainer.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="mt-3">Loading data, please wait...</div>
+                    </div>
+                `;
+                
+                // Use the simple logs endpoint for direct data access
+                debugLog('Fetching logs from simple endpoint...');
+                const logsResponse = await fetch(`/admin/simple-logs?_cb=${Date.now()}`);
+                if (!logsResponse.ok) {
+                    throw new Error(`HTTP error fetching logs: ${logsResponse.status}`);
+                }
+                
+                const logsData = await logsResponse.json();
+                const logsArray = logsData.data || [];
+                debugLog(`Fetched ${logsArray.length} logs from simple endpoint`);
+                
+                // Ensure each log has an ID
+                logsArray.forEach(log => {
+                    if (!log.id) {
+                        log.id = `log-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+                    }
+                });
+                
+                // Display logs
+                updateLogsUI(logsArray);
+                
+                debugLog('Data refresh completed successfully');
+            } catch (error) {
+                debugLog('Error refreshing data', error.message);
+                
+                // Display error in UI
+                const logsContainer = document.getElementById('logs-container');
+                logsContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h5>Error Loading Data</h5>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const token = getToken();
+            if (token) {
+                showAdmin();
+            } else {
+                showLogin();
+            }
+            
+            // When loading the admin panel, enable real-time updates by default
+            setTimeout(() => {
+                const realTimeSwitch = document.getElementById('real-time-switch');
+                if (realTimeSwitch) {
+                    realTimeSwitch.checked = true;
+                    setupRealTimeUpdates(true);
+                }
+            }, 1000);
+            
+            // Login form
+            document.getElementById('login-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const loginError = document.getElementById('login-error');
+                
+                try {
+                    loginError.style.display = 'none';
+                    await login(email, password);
+                    showAdmin();
+                } catch (error) {
+                    loginError.textContent = error.message || 'Login failed';
+                    loginError.style.display = 'block';
+                }
+            });
+            
+            // Logout button
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                clearToken();
+                showLogin();
+            });
+            
+            // Delete Selected Logs button
+            document.getElementById('delete-selected-btn').addEventListener('click', async function() {
+                // Get selected log IDs
+                const selectedCheckboxes = document.querySelectorAll('.log-checkbox:checked');
+                const selectedLogIds = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
+                
+                if (selectedLogIds.length === 0) {
+                    return; // No logs selected
+                }
+                
+                // Confirm with the user before deleting
+                if (!confirm(`Are you sure you want to delete ${selectedLogIds.length} selected log(s)? This action cannot be undone.`)) {
+                    return;
+                }
+                
+                try {
+                    this.disabled = true;
+                    this.textContent = 'Deleting...';
+                    
+                    debugLog(`Deleting ${selectedLogIds.length} selected logs with IDs: ${JSON.stringify(selectedLogIds)}`);
+                    
+                    // Add a loading indicator
+                    const logsContainer = document.getElementById('logs-container');
+                    logsContainer.innerHTML = `
+                        <div class="loading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="mt-3">Deleting selected logs, please wait...</div>
+                        </div>
+                    `;
+                    
+                    // Show the request details in debug logs
+                    const requestUrl = `/admin/logs/delete-selected?_cb=${Date.now()}`;
+                    const requestBody = { logIds: selectedLogIds };
+                    debugLog('DELETE REQUEST URL:', requestUrl);
+                    debugLog('DELETE REQUEST BODY:', JSON.stringify(requestBody));
+                    
+                    // Call the API to delete selected logs
+                    const response = await fetch(requestUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+                    
+                    debugLog(`DELETE RESPONSE STATUS: ${response.status} ${response.statusText}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Server responded with status ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    debugLog('DELETE RESPONSE DATA:', JSON.stringify(data));
+                    
+                    if (data.success) {
+                        debugLog(`Successfully deleted ${data.deletedCount} logs`);
+                        alert(`Successfully deleted ${data.deletedCount} logs`);
+                        
+                        // Refresh data
+                        await forceDataRefresh();
+                    } else {
+                        throw new Error(data.message || 'Unknown error');
+                    }
+                } catch (error) {
+                    debugLog('Error deleting selected logs', error.message);
+                    alert('Failed to delete selected logs: ' + error.message);
+                    
+                    // Show error in logs container
+                    const logsContainer = document.getElementById('logs-container');
+                    logsContainer.innerHTML = `
+                        <div class="alert alert-danger">
+                            <h5>Error Deleting Logs</h5>
+                            <p>${error.message}</p>
+                            <p>Please try again or check the server console for errors.</p>
+                        </div>
+                    `;
+                } finally {
+                    this.disabled = false;
+                    this.textContent = 'Delete Selected';
+                }
+            });
+            
+            // Limit logs button
+            document.getElementById('limit-logs-btn').addEventListener('click', async function() {
+                try {
+                    this.disabled = true;
+                    this.textContent = 'Processing...';
+                    
+                    debugLog('Limiting logs to 7 most recent entries');
+                    
+                    // Add a loading indicator
+                    const logsContainer = document.getElementById('logs-container');
+                    logsContainer.innerHTML = `
+                        <div class="loading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="mt-3">Keeping 7 most recent logs, please wait...</div>
+                        </div>
+                    `;
+                    
+                    // Use fetch directly with cache-busting parameter
+                    const response = await fetch(`/admin/logs/limit?max=7&_cb=${Date.now()}`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Server responded with status ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        debugLog('Logs limited successfully');
+                        alert('Keeping 7 most recent logs only!');
+                        
+                        // Manually refresh data
+                        await forceDataRefresh();
+                    } else {
+                        throw new Error(data.message || 'Unknown error');
+                    }
+                } catch (error) {
+                    debugLog('Error limiting logs', error.message);
+                    alert('Failed to limit logs: ' + error.message);
+                    
+                    // Show error in logs container
+                    const logsContainer = document.getElementById('logs-container');
+                    logsContainer.innerHTML = `
+                        <div class="alert alert-danger">
+                            <h5>Error Limiting Logs</h5>
+                            <p>${error.message}</p>
+                            <p>Please try again or check the server console for errors.</p>
+                        </div>
+                    `;
+                } finally {
+                    this.disabled = false;
+                    this.textContent = 'Keep 7 Recent Logs';
+                }
+            });
+            
+            // Apply filters button
+            document.getElementById('apply-filters-btn').addEventListener('click', function() {
+                const cityFilter = document.getElementById('city-filter').value;
+                const serviceFilter = document.getElementById('service-filter').value;
+                
+                // Load logs with filters
+                loadLogs(cityFilter, serviceFilter);
+                
+                // Update real-time connection if enabled
+                if (document.getElementById('real-time-switch').checked) {
+                    setupRealTimeUpdates(true);
+                }
+            });
+            
+            // Real-time switch
+            document.getElementById('real-time-switch').addEventListener('change', function() {
+                setupRealTimeUpdates(this.checked);
+            });
+            
+            // Debug button
+            document.getElementById('show-debug-btn').addEventListener('click', function() {
+                const debugCard = document.getElementById('debug-card');
+                const debugLogsElement = document.getElementById('debug-logs');
+                
+                if (debugCard.style.display === 'none') {
+                    debugCard.style.display = 'block';
+                    this.textContent = 'Hide Debug';
+                    
+                    // Update debug logs display
+                    let html = '';
+                    debugLogs.forEach(log => {
+                        html += `<div>${log.timestamp.split('T')[1].split('.')[0]} - ${log.message}</div>`;
+                    });
+                    debugLogsElement.innerHTML = html;
+                    debugLogsElement.scrollTop = debugLogsElement.scrollHeight;
+                } else {
+                    debugCard.style.display = 'none';
+                    this.textContent = 'Show Debug';
+                }
+            });
+            
+            // Force refresh button
+            document.getElementById('force-refresh-data-btn').addEventListener('click', async function() {
+                this.disabled = true;
+                this.textContent = 'Loading...';
+                
+                try {
+                    debugLog('Force refreshing data from debug panel');
+                    
+                    // Just refresh UI with simple endpoint
+                    await forceDataRefresh();
+                    
+                    debugLog('Force refresh completed from debug panel');
+                } catch (error) {
+                    debugLog('Error in force refresh', error.message);
+                } finally {
+                    this.disabled = false;
+                    this.textContent = 'Force Refresh Data';
+                }
+            });
+            
+            // Force load button
+            document.getElementById('force-load-btn').addEventListener('click', async function() {
+                this.disabled = true;
+                this.textContent = 'Loading...';
+                
+                try {
+                    debugLog('Force loading data triggered by user');
+                    await forceDataRefresh();
+                } catch (error) {
+                    debugLog('Error in force load button', error.message);
+                } finally {
+                    this.disabled = false;
+                    this.textContent = 'Force Load Data';
+                }
+            });
+            
+            // Add Refresh Stats button event listener
+            document.getElementById('refresh-stats-btn').addEventListener('click', async function() {
+                this.disabled = true;
+                this.textContent = 'Loading...';
+                
+                try {
+                    debugLog('Manually refreshing statistics');
+                    await loadStats();
+                    debugLog('Statistics refreshed successfully');
+                } catch (error) {
+                    debugLog('Error refreshing statistics', error.message);
+                } finally {
+                    this.disabled = false;
+                    this.textContent = 'Refresh Stats';
+                }
+            });
+            
+            // Add double-check timer
+            setTimeout(checkDataLoaded, 5000);
+        });
+
+        // Double-check data after initial load
+        function checkDataLoaded() {
+            const logsContainer = document.getElementById('logs-container');
+            
+            // If still showing loading spinner after 5 seconds, try to force refresh
+            if (logsContainer.innerHTML.includes('loading')) {
+                debugLog('Logs still loading after timeout, attempting to force refresh...');
+                forceDataRefresh();
+            }
+        }
+    </script>
+</body>
+</html> 

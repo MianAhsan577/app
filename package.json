@@ -1,5 +1,16 @@
 {
+  "name": "spirit-whatsapp-app",
+  "version": "1.0.0",
+  "main": "route-test.js",
+  "scripts": {
+    "start": "node route-test.js",
+    "dev": "nodemon route-test.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "firebase-admin": "^13.3.0"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }

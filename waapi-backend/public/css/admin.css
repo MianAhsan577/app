@@ -259,14 +259,15 @@ body {
     padding: 0.5rem;
     border: 1px solid #ddd;
     border-radius: 4px;
+    font-size: 0.9rem;
 }
 
 /* Logs Table */
 .logs-table-container {
+    overflow-x: auto;
     background-color: white;
     border-radius: 8px;
     box-shadow: var(--shadow);
-    overflow: hidden;
     margin-bottom: 1.5rem;
 }
 
@@ -278,8 +279,9 @@ body {
 .logs-table th {
     background-color: var(--primary-color);
     color: white;
-    padding: 1rem;
     text-align: left;
+    padding: 1rem;
+    font-weight: 500;
 }
 
 .logs-table td {
@@ -288,31 +290,35 @@ body {
 }
 
 .logs-table tbody tr:hover {
-    background-color: #f9f9f9;
+    background-color: var(--gray-light);
 }
 
 .loading, .no-data {
-    padding: 2rem;
     text-align: center;
+    padding: 3rem;
     color: var(--gray);
+    font-size: 1.1rem;
 }
 
 /* Pagination */
 .pagination {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
 }
 
 .pagination span {
-    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    background-color: var(--light-color);
 }
 
 /* Analytics */
 .period-selector {
     display: flex;
     gap: 0.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .period-btn.active {
@@ -321,77 +327,86 @@ body {
 }
 
 .stats-cards {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
 }
 
 .stat-card {
-    flex: 1;
-    min-width: 200px;
     background-color: white;
     border-radius: 8px;
     box-shadow: var(--shadow);
     padding: 1.5rem;
     display: flex;
     align-items: center;
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
 }
 
 .stat-icon {
-    font-size: 2rem;
+    background-color: var(--light-color);
     color: var(--primary-color);
-    margin-right: 1.5rem;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 1rem;
 }
 
 .stat-content h3 {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
     color: var(--gray);
+    margin-bottom: 0.3rem;
 }
 
 .stat-value {
-    font-size: 2rem;
-    font-weight: 600;
+    font-size: 1.8rem;
+    font-weight: 700;
     color: var(--primary-color);
 }
 
 .charts-row {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .chart-container {
-    flex: 1;
-    min-width: 300px;
     background-color: white;
     border-radius: 8px;
     box-shadow: var(--shadow);
     padding: 1.5rem;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
 }
 
 .chart-container h3 {
-    margin-bottom: 1rem;
+    font-size: 1.1rem;
     color: var(--primary-color);
-    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
 }
 
 .chart-container.full-width {
-    width: 100%;
+    grid-column: 1 / -1;
 }
 
 /* Account Settings */
 .account-settings {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
 }
 
 .account-info, .password-change {
-    flex: 1;
-    min-width: 300px;
     background-color: white;
     border-radius: 8px;
     box-shadow: var(--shadow);
@@ -399,63 +414,74 @@ body {
 }
 
 .account-info h3, .password-change h3 {
-    margin-bottom: 1.5rem;
     color: var(--primary-color);
+    margin-bottom: 1.5rem;
 }
 
 .info-item {
-    margin-bottom: 1rem;
-    display: flex;
+    margin-bottom: 1.5rem;
 }
 
 .info-item label {
-    font-weight: 500;
-    width: 120px;
+    display: block;
+    color: var(--gray);
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
 }
 
-/* Customer Info & Lead Quality Styles */
 .details-text {
-    font-size: 0.85rem;
-    color: #666;
-    margin-top: 5px;
-    max-width: 250px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.customer-details {
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+    white-space: pre-wrap;
 }
 
 .budget-text {
-    font-size: 0.85rem;
-    color: #555;
-    font-weight: 500;
-    margin-top: 3px;
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    background-color: var(--light-color);
+    border-radius: 4px;
+    font-size: 0.9rem;
 }
 
 .lead-quality {
-    display: inline-block;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-left: 5px;
-    color: white;
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
 }
 
-.lead-hot {
-    background-color: #dc3545;
+.lead-quality span {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
 }
 
-.lead-medium {
-    background-color: #ffc107;
-    color: #333;
+.lead-hot span {
+    background-color: var(--danger-color);
 }
 
-.lead-low {
-    background-color: #6c757d;
+.lead-medium span {
+    background-color: var(--warning-color);
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
+.lead-low span {
+    background-color: var(--gray);
+}
+
+/* Improved Responsive Styles */
+@media (max-width: 1200px) {
+    .stats-cards {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 992px) {
     .dashboard-content {
         flex-direction: column;
     }
@@ -467,12 +493,16 @@ body {
     
     .sidebar nav ul {
         display: flex;
-        overflow-x: auto;
+        justify-content: space-between;
+        flex-wrap: wrap;
     }
     
     .sidebar nav ul li {
-        padding: 0.5rem 1rem;
-        white-space: nowrap;
+        padding: 0.75rem 1rem;
+    }
+    
+    .main-content {
+        padding: 1.5rem;
     }
     
     .section-header {
@@ -480,8 +510,52 @@ body {
         align-items: flex-start;
     }
     
-    .filters {
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .card-header h5 {
+        margin-bottom: 10px;
+    }
+    
+    .card-header .d-flex {
         width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .dashboard-header .logo {
+        margin-bottom: 1rem;
+        justify-content: center;
+    }
+    
+    .user-info {
+        justify-content: center;
+    }
+    
+    .filter-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .col-md-3, .col-md-9 {
+        width: 100%;
+    }
+    
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
     }
     
     .filter {
@@ -490,10 +564,90 @@ body {
     }
     
     .filter label {
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .filter select, .filter input {
+        width: 100%;
+    }
+    
+    .logs-table th, .logs-table td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .logs-container {
+        max-height: 450px;
     }
     
     .charts-row {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+    }
+    
+    .account-settings {
+        grid-template-columns: 1fr;
+    }
+    
+    .btn {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    /* Admin panel specific mobile improvements */
+    .navbar-brand {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .navbar-toggler {
+        margin-bottom: 0.5rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    #real-time-switch {
+        margin-top: 0.5rem;
+    }
+    
+    #delete-selected-btn, #force-load-btn {
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-form {
+        padding: 1.5rem;
+    }
+    
+    .dashboard-header .logo h1 {
+        font-size: 1.2rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .logs-table th, .logs-table td {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-value {
+        font-size: 1.4rem;
+    }
+    
+    .chart-container {
+        padding: 1rem;
+        min-height: 250px;
+    }
+    
+    .form-select, .form-control {
+        font-size: 0.9rem;
     }
 } 

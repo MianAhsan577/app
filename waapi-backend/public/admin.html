@@ -703,7 +703,7 @@
                     selectedService: "Office Furniture",
                     source: "Website",
                     status: "New",
-                    supportNumber: "+923185600656",
+                    supportNumber: "+923249988114", // Junaid
                     timestamp: new Date().toISOString(),
                     inquiryDetails: "Looking for a complete office setup for 10 employees"
                 },
@@ -715,7 +715,7 @@
                     selectedService: "Home Furniture",
                     source: "WhatsApp",
                     status: "Responded",
-                    supportNumber: "+923219314424",
+                    supportNumber: "+923219314424", // Ali Hassan
                     timestamp: new Date(Date.now() - 3600000).toISOString(),
                     inquiryDetails: "Interested in living room furniture set"
                 },
@@ -727,7 +727,7 @@
                     selectedService: "Office Furniture",
                     source: "Website",
                     status: "Completed",
-                    supportNumber: "+923249988114",
+                    supportNumber: "+923249988114", // Junaid
                     timestamp: new Date(Date.now() - 7200000).toISOString(),
                     inquiryDetails: "Need furniture for conference room"
                 },
@@ -739,9 +739,10 @@
                     selectedService: "Home Furniture",
                     source: "Facebook",
                     status: "New",
-                    supportNumber: "+923178882070",
+                    supportNumber: "+923178882070", // Khadija
                     timestamp: new Date(Date.now() - 10800000).toISOString(),
-                    inquiryDetails: "Looking for bedroom furniture set - king size bed, wardrobes, and side tables"
+                    inquiryDetails: "Looking for bedroom furniture set - king size bed, wardrobes, and side tables",
+                    campaign: "Meta_Spring_Collection"
                 },
                 {
                     id: 'sample-5',
@@ -751,9 +752,35 @@
                     selectedService: "Office Furniture",
                     source: "popup_interface",
                     status: "New",
-                    supportNumber: "+923185600656",
+                    supportNumber: "+923185600656", // Fawad Khan
                     timestamp: new Date(Date.now() - 14400000).toISOString(),
                     inquiryDetails: "Need pricing for executive office setup"
+                },
+                {
+                    id: 'sample-6',
+                    customerName: "Zubair Ahmed",
+                    phone: "+923335557777",
+                    selectedCity: "Karachi",
+                    selectedService: "Home Furniture",
+                    source: "meta_ads",
+                    status: "New",
+                    supportNumber: "+923178882070", // Khadija
+                    timestamp: new Date(Date.now() - 18000000).toISOString(),
+                    inquiryDetails: "Interested in dining table set for 6 people",
+                    campaign: "Meta_Ramadan_Special"
+                },
+                {
+                    id: 'sample-7',
+                    customerName: "Ayesha Malik",
+                    phone: "+923452223344",
+                    selectedCity: "Islamabad",
+                    selectedService: "Office Furniture",
+                    source: "Meta",
+                    status: "Responded",
+                    supportNumber: "+923185600656", // Fawad Khan
+                    timestamp: new Date(Date.now() - 21600000).toISOString(),
+                    inquiryDetails: "Looking for modular office workstations for a team of 15",
+                    campaign: "Meta_Corporate_Solutions"
                 }
             ];
         }
@@ -971,26 +998,34 @@
         function getSampleStats() {
             return {
                 success: true,
-                totalInteractions: 24,
-                uniqueUsers: 18,
+                totalInteractions: 35,
+                uniqueUsers: 28,
                 lastInteraction: new Date().toISOString(),
                 byCity: {
-                    "Lahore": 12,
-                    "Islamabad": 8,
-                    "Karachi": 4
+                    "Lahore": 15,
+                    "Islamabad": 12,
+                    "Karachi": 8
                 },
                 byService: {
-                    "Office Furniture": 14,
-                    "Home Furniture": 10
+                    "Office Furniture": 20,
+                    "Home Furniture": 15
                 },
                 bySource: {
-                    "WhatsApp": 16,
-                    "Website": 8
+                    "Meta Ads": 12,
+                    "Website Form": 14,
+                    "WhatsApp": 5,
+                    "Google Ads": 4
                 },
                 byStatus: {
-                    "New": 10,
-                    "Responded": 8,
-                    "Completed": 6
+                    "New": 15,
+                    "Responded": 12,
+                    "Completed": 8
+                },
+                byCampaign: {
+                    "Meta_Spring_Collection": 6, 
+                    "Meta_Ramadan_Special": 4,
+                    "Meta_Corporate_Solutions": 2,
+                    "Organic": 23
                 }
             };
         }
@@ -1228,6 +1263,55 @@
                     ? log.customerName 
                     : 'New Inquiry';
                 
+                // Determine source with better labels
+                let source = 'Organic';
+                if (log.source) {
+                    if (log.source.toLowerCase().includes('meta') || log.source.toLowerCase().includes('facebook')) {
+                        source = 'Meta Ads';
+                    } else if (log.source.toLowerCase().includes('popup') || log.source === 'popup_interface') {
+                        source = 'Website Form';
+                    } else if (log.source.toLowerCase().includes('google')) {
+                        source = 'Google Ads';
+                    } else {
+                        source = log.source;
+                    }
+                }
+                
+                // Determine campaign type
+                let campaign = log.campaign || 'Organic';
+                if (log.campaign && log.campaign.toLowerCase().includes('meta')) {
+                    campaign = 'Meta Campaign';
+                }
+                
+                // Map support numbers to agent names
+                let supportAgent = '';
+                const supportNumber = log.supportNumber || '';
+                
+                switch (supportNumber.replace(/\s+/g, '')) {
+                    case '+923185600656':
+                    case '03185600656':
+                    case '923185600656':
+                        supportAgent = 'Fawad Khan';
+                        break;
+                    case '+923219314424':
+                    case '03219314424':
+                    case '923219314424':
+                        supportAgent = 'Ali Hassan';
+                        break;
+                    case '+923249988114':
+                    case '03249988114':
+                    case '923249988114':
+                        supportAgent = 'Junaid';
+                        break;
+                    case '+923178882070':
+                    case '03178882070':
+                    case '923178882070':
+                        supportAgent = 'Khadija';
+                        break;
+                    default:
+                        supportAgent = 'Unassigned';
+                }
+                
                 // Create the log card with improved mobile layout
                 html += `
                     <div class="card log-card mb-3" data-log-id="${log.id}">
@@ -1263,15 +1347,15 @@
                                 <div class="col">
                                     <div class="info-item">
                                         <span class="fw-bold">Source:</span>
-                                        <span>${log.source && log.source !== 'popup_interface' ? log.source : 'Website Form'}</span>
+                                        <span>${source}</span>
                                     </div>
                                     <div class="info-item">
-                                        <span class="fw-bold">Support:</span>
-                                        <span class="text-break">${log.supportNumber || 'N/A'}</span>
+                                        <span class="fw-bold">Agent:</span>
+                                        <span>${supportAgent}</span>
                                     </div>
                                     <div class="info-item">
                                         <span class="fw-bold">Campaign:</span>
-                                        <span>${log.campaign || 'Organic'}</span>
+                                        <span>${campaign}</span>
                                     </div>
                                 </div>
                             </div>

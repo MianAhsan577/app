@@ -52,15 +52,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Server available at http://localhost:${PORT}`);
-  console.log(`Admin dashboard available at http://localhost:${PORT}/admin.html`);
-  console.log(`Development mode enabled. You can login with:`);
-  console.log(`Email: admin@example.com`);
-  console.log(`Password: password123`);
-});
-
+// This file doesn't actually start the server - it exports the app
+// The server is started in index.js
 module.exports = app; 

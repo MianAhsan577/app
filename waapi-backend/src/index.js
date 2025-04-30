@@ -19,20 +19,18 @@ const result = dotenv.config({ path: envPath });
 console.log('dotenv result:', result.error ? 'Error: ' + result.error : 'Success');
 
 // Manually set environment variables if they're not set
-if (!process.env.PORT) process.env.PORT = 5003;
 if (!process.env.WAAPI_API_KEY) process.env.WAAPI_API_KEY = 'ElmIqYY1UDP5D1Pu1XxisjeAvPzCJBVMXT2usuGj49ca7e2c';
 if (!process.env.WAAPI_BASE_URL) process.env.WAAPI_BASE_URL = 'https://waapi.app/api';
 if (!process.env.TEST_NUMBER) process.env.TEST_NUMBER = '+923131444779';
 if (!process.env.JWT_SECRET) process.env.JWT_SECRET = 'spirit-whatsapp-jwt-secret-2023';
 
-// Set development mode for simplicity
-process.env.NODE_ENV = 'development';
+// Set development mode if not specified
+if (!process.env.NODE_ENV) process.env.NODE_ENV = 'development';
 
 // Initialize Express app
 const app = express();
-// Force PORT to be 5003 to avoid conflicts
-process.env.PORT = process.env.PORT || 5003;
-const PORT = 5003;
+// Let Railway set the PORT
+const PORT = process.env.PORT || 5003;
 
 // Middleware
 app.use(express.json());
@@ -105,9 +103,7 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Server available at http://localhost:${PORT}`);
   console.log(`Admin dashboard available at http://localhost:${PORT}/admin-panel`);
-  console.log(`Development mode enabled. You can login with:`);
-  console.log(`Email: admin@example.com`);
-  console.log(`Password: password123`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
 });
 
 module.exports = app; 

@@ -23,12 +23,14 @@ let selectedService = null;
 // DOM elements
 let step1Element;
 let step2Element;
+let backButton;
 
 // Wait for DOM content to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize DOM elements
     step1Element = document.getElementById('step1');
     step2Element = document.getElementById('step2');
+    backButton = document.getElementById('backButton');
     
     // Add event listeners to city options
     const cityOptions = document.querySelectorAll('#step1 .option');
@@ -45,6 +47,9 @@ document.addEventListener('DOMContentLoaded', function() {
             selectService(this.dataset.value);
         });
     });
+    
+    // Add event listener to back button
+    backButton.addEventListener('click', goBackToStep1);
     
     console.log('Selection interface initialized successfully');
 });
@@ -72,6 +77,24 @@ function selectCity(city) {
         step1Element.classList.remove('active');
         step2Element.classList.add('active');
     }, 300);
+}
+
+/**
+ * Go back to city selection step
+ */
+function goBackToStep1() {
+    console.log('Going back to city selection');
+    
+    // Reset service selection
+    const serviceOptions = document.querySelectorAll('#step2 .option');
+    serviceOptions.forEach(option => {
+        option.classList.remove('selected');
+    });
+    selectedService = null;
+    
+    // Show city selection step
+    step2Element.classList.remove('active');
+    step1Element.classList.add('active');
 }
 
 /**

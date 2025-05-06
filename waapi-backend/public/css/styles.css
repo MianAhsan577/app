@@ -61,6 +61,36 @@ body {
     object-fit: contain;
 }
 
+.step-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.step-header h2 {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+/* Back arrow styles */
+.back-arrow {
+    color: #25D366;
+    font-weight: 500;
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.back-arrow span {
+    display: inline-block;
+}
+
+.back-arrow span::before {
+    content: "←";
+    margin-right: 5px;
+}
+
 h1 {
     font-size: 1.5rem;
     text-align: center;

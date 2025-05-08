@@ -25,21 +25,45 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 20px;
+    position: relative;
+    overflow: hidden;
 }
 
 .container {
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
 .popup-form {
-    background-color: var(--white);
+    background-color: rgba(255, 255, 255, 0.322);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
     padding: 30px;
     position: relative;
     animation: fadeIn 0.3s ease-in-out;
+}
+
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+}
+
+.video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
+    z-index: -1;
 }
 
 @keyframes fadeIn {
@@ -52,6 +76,7 @@ body {
     margin-bottom: 20px;
     max-height: 100px;
     overflow: hidden;
+    background-color: transparent;
 }
 
 .logo img {
@@ -59,6 +84,7 @@ body {
     max-height: 80px;
     height: auto;
     object-fit: contain;
+    background-color: transparent;
 }
 
 .step-header {
@@ -96,13 +122,17 @@ h1 {
     text-align: center;
     margin-bottom: 10px;
     color: var(--text-color);
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+    font-weight: 600;
 }
 
 p {
     font-size: 0.9rem;
     text-align: center;
     margin-bottom: 30px;
-    color: var(--light-text);
+    color: var(--text-color);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
+    font-weight: 500;
 }
 
 .steps {
@@ -122,6 +152,8 @@ h2 {
     font-size: 1.2rem;
     margin-bottom: 20px;
     text-align: center;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+    font-weight: 600;
 }
 
 .options {
@@ -140,34 +172,19 @@ h2 {
     text-align: center;
     position: relative;
     overflow: hidden;
-}
-
-.option:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--primary-color);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 0;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
 .option:hover {
     border-color: var(--primary-color);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.option:hover:before {
-    opacity: 0.05;
+    background-color: rgba(255, 255, 255, 0.85);
 }
 
 .option.selected {
     border-color: var(--primary-color);
-    background-color: var(--light-primary);
+    background-color: rgba(220, 248, 198, 0.85);
 }
 
 .option-content {
@@ -181,6 +198,14 @@ h2 {
 
 .icon {
     font-size: 2rem;
+}
+
+.city-icon {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 5px;
 }
 
 .label {
@@ -224,5 +249,27 @@ h2 {
     
     .icon {
         font-size: 1.5rem;
+    }
+    
+    /* Responsive video adjustments for mobile */
+    .video-background {
+        height: 100%;
+        width: auto;
+        min-width: 100%;
+    }
+}
+
+/* Performance optimizations for video */
+@media (prefers-reduced-motion: reduce) {
+    .video-background {
+        display: none;
+    }
+    
+    body {
+        background-color: var(--background);
+    }
+    
+    .video-overlay {
+        display: none;
     }
 } 

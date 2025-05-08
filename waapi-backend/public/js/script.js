@@ -32,6 +32,9 @@ document.addEventListener('DOMContentLoaded', function() {
     step2Element = document.getElementById('step2');
     backButton = document.getElementById('backButton');
     
+    // Initialize video background
+    setupVideoBackground();
+    
     // Add event listeners to city options
     const cityOptions = document.querySelectorAll('#step1 .option');
     cityOptions.forEach(option => {
@@ -53,6 +56,51 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Selection interface initialized successfully');
 });
+
+/**
+ * Set up video background with error handling and performance optimization
+ */
+function setupVideoBackground() {
+    const videoElement = document.querySelector('.video-background');
+    
+    if (!videoElement) {
+        console.error('Video element not found');
+        return;
+    }
+    
+    // Set playback rate to 0.5x to slow down the video
+    videoElement.playbackRate = 0.3;
+    
+    // Error handling for video
+    videoElement.addEventListener('error', function() {
+        console.error('Error loading video');
+        // Fallback to a non-video background
+        document.body.style.backgroundColor = 'var(--background)';
+        // Hide video and overlay elements
+        this.style.display = 'none';
+        const overlay = document.querySelector('.video-overlay');
+        if (overlay) overlay.style.display = 'none';
+    });
+    
+    // Performance optimization - lower quality on mobile
+    if (window.innerWidth < 768) {
+        videoElement.setAttribute('playbackRate', '0.5');
+    }
+    
+    // Make sure video plays
+    videoElement.play().catch(error => {
+        console.error('Video autoplay failed:', error);
+        // Show play button if autoplay is blocked
+        const overlay = document.querySelector('.video-overlay');
+        if (overlay) {
+            overlay.innerHTML = '<button id="play-video" style="position: fixed; top: 20px; right: 20px; z-index: 10; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px;">▶</button>';
+            document.getElementById('play-video').addEventListener('click', function() {
+                videoElement.play();
+                this.style.display = 'none';
+            });
+        }
+    });
+}
 
 /**
  * Handle city selection
